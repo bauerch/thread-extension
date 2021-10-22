@@ -1,0 +1,18 @@
+# Test coverage configuration.
+[run]
+branch = True
+source = src
+omit = # Excludes all files located in the util directory
+
+[report]
+exclude_lines =
+    raise NotImplementedError
+    pass
+    if __name__ == "__main__"
+
+ignore_errors = True
+omit =
+    # Excludes all files located in the test directory
+    test/*
+    # Excludes all __init__.py files
+    */__init__.py
