@@ -1,7 +1,8 @@
 @echo off
 rem Navigate to the project root folder
 cd %cd%\..\..
-rem TODO: Activate conda virtual environment
+rem Activate conda virtual environment
+call activate .\venv\
 
 echo #### 1. RUN UNIT TESTS ####################################################
 python -m coverage run --rcfile=.coveragerc -m unittest discover -s test -p "test_*.py" -b
@@ -11,4 +12,7 @@ del .coverage
 echo #### 2. ANALYSE CODE QUALITY ##############################################
 for /R src %%f in (*.py) do pylint --rcfile=.pylintrc "%%f"
 for /R src %%f in (*.py) do mypy --config=mypy.ini "%%f"
+
+rem Deactivate conda virtual environment
+call conda deactivate
 pause
