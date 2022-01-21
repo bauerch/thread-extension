@@ -75,6 +75,8 @@ class CycleWorkerThread(Thread):
         """
         if self._target:
             self._target(*self._args, **self._kwargs)
+        else:
+            self.stop()
 
     def is_working(self):
         return not self._task_done.is_set()

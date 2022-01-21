@@ -93,6 +93,16 @@ class CycleWorkerThreadClass(unittest.TestCase):
         self.__worker.pause()
         self._verify_stopped_state()
 
+    def test_target_None(self):
+        """
+        This test checks if an activate worker without a given work routine
+        is permanently stopped immediately.
+        """
+        self.__worker = handler.CycleWorkerThread(target=None)
+        self._verify_initial_state()
+        self.__worker.start()
+        self._verify_stopped_state()
+
     def _verify_initial_state(self):
         self.assertFalse(self.__worker.is_alive())
         self.assertFalse(self.__worker.is_working())
@@ -118,8 +128,6 @@ class CycleWorkerThreadClass(unittest.TestCase):
         self.assertIn("paused", repr(self.__worker))
 
     def _verify_stopped_state(self):
-        while self.__worker.is_working():
-            time.sleep(0.005)
         self.__worker.join(timeout=2.0)
         self.assertFalse(self.__worker.is_alive())
         self.assertFalse(self.__worker.is_working())
