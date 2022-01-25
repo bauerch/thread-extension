@@ -2,9 +2,11 @@
 """
 Thread based handlers.
 """
+import abc
+import queue
 import time
 from threading import Thread, Event
-from typing import Callable, Optional
+from typing import Any, Callable, Optional
 from src.thread_extension.control import ThreadControlMixin
 
 
@@ -77,6 +79,118 @@ class CycleWorkerThread(Thread):
             self._target(*self._args, **self._kwargs)
         else:
             self.stop()
+
+    def is_working(self):
+        return not self._task_done.is_set()
+
+    def pause(self) -> None:
+        self._control.pause()
+
+    def resume(self) -> None:
+        self._control.resume()
+
+    def stop(self) -> None:
+        self._control.stop()
+
+    @property
+    def delay(self) -> float:
+        """
+        Indicates how much time shall pass before the worker continues with
+        the next work cycle.
+        """
+        return self._delay
+
+    @delay.setter
+    def delay(self, delay: float) -> None:
+        if delay < 0.0:
+            raise ValueError("Delay must be non-negative")
+        self._delay = delay
+
+    @property
+    def timeout(self) -> float:
+        """
+        Indicates how much time the worker is allowed to pause before
+        the worker is automatically forced to stop.
+        """
+        return self._timeout
+
+    @timeout.setter
+    def timeout(self, timeout: float) -> None:
+        if timeout < 0.0:
+            raise ValueError("Timeout must be non-negative")
+        self._timeout = timeout
+
+    def preparation(self) -> None:
+        """
+        Optional preparatory steps for the worker to perform before starting.
+        """
+
+    def post_processing(self) -> None:
+        """
+        Optional follow-up steps for the worker to perform after stoppage.
+        """
+
+
+class TaskWorkerThread(Thread):
+    """
+    This class represents a special thread type, which processes a stack of
+    similar tasks one after the other.
+    """
+    def __init__(self,
+                 tasks: queue.Queue,
+                 delay: float = 0.0,
+                 timeout: float = 1000.0,
+                 daemon: Optional[bool] = False
+                 ) -> None:
+        """
+        Initializes TaskWorkerThread class.
+        """
+        super().__init__(daemon=daemon)
+        self._control = ThreadControlMixin()
+        self._timeout = timeout
+        self._delay = delay
+        self._queue = tasks
+        self._task_done = Event()
+        self._task_done.set()
+
+    def __repr__(self) -> str:
+        string = super().__repr__()
+        if self.is_alive():
+            string = string[:-2] + f", {repr(self._control)})>"
+        return string
+
+    def run(self) -> None:
+        """
+        Defines the workers's concrete workflow.
+        """
+        self._control.set_start_state()
+        try:
+            self.preparation()
+            while not self._control.is_stopped():
+                if self._queue.empty() or not \
+                        self._control.wait(self._timeout):
+                    self.stop()  # Force stoppage
+                    break
+                self._task_done.clear()
+                try:
+                    task = self._queue.get()
+                    self.work_on_task(task)
+                except queue.Empty:
+                    self.stop()
+                else:
+                    self._queue.task_done()
+                finally:
+                    self._task_done.set()
+                time.sleep(self._delay)
+            self.post_processing()
+        finally:
+            self._control.set_end_state()
+
+    @abc.abstractmethod
+    def work_on_task(self, task: Any) -> None:
+        """
+        Abstract method representing the worker's activity on all task.
+        """
 
     def is_working(self):
         return not self._task_done.is_set()
