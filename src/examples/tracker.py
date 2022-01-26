@@ -31,8 +31,7 @@ class NewFileTracker(handler.CycleWorkerThread):
     @property
     def new_files(self) -> queue.Queue:
         """
-        Represents the getter function of the internal queue object
-        containing newly detected files.
+        Returns all newly detected files.
 
         Returns
         -------
@@ -45,11 +44,6 @@ class NewFileTracker(handler.CycleWorkerThread):
         """
         Called once at the beginning. Takes a snapshot of the current folder
         content, as a reference to distinguish new from old files.
-
-        Notes
-        -----
-        All detected files, with a creation time earlier than the start time
-        of the NewFileTracker instance, are considered old.
         """
         self.__ignored = {file for file in glob.glob(self.__pattern) if
                           os.path.getctime(file) < self.__start_time}
@@ -57,8 +51,7 @@ class NewFileTracker(handler.CycleWorkerThread):
     def work_routine(self) -> None:
         """
         Called periodically as soon as `scan_interval` has expired. Checks if
-        new files of the given type are created in `folder`. If new files are
-        detected, they are put into `new_files` for further processing.
+        new files of the given type are created.
         """
         files = set(glob.glob(self.__pattern))
         for file in files.difference(self.__ignored):
