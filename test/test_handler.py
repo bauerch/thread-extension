@@ -2,13 +2,13 @@ import queue
 import time
 import unittest
 from unittest import mock
-from src.thread_extension import handler
+from src import handler
 
 
 class CycleWorkerThreadClass(unittest.TestCase):
     """
     This class represents a wrapper class for all unittests related to the
-    CycleWorkerThread class within <src.thread_extension.handler>.
+    CycleWorkerThread class within <src.handler>.
     """
     @staticmethod
     def work_routine() -> None:
@@ -141,7 +141,7 @@ class CycleWorkerThreadClass(unittest.TestCase):
 class TaskWorkerThreadClass(unittest.TestCase):
     """
     This class represents a wrapper class for all unittests related to the
-    TaskWorkerThread class within <src.thread_extension.handler>.
+    TaskWorkerThread class within <src.handler>.
     """
     class SpecificTaskWorker(handler.TaskWorkerThread):
         """
@@ -254,7 +254,7 @@ class TaskWorkerThreadClass(unittest.TestCase):
         self.__worker = self.SpecificTaskWorker(tasks)
 
         m1 = mock.Mock()
-        root = "src.thread_extension.handler"
+        root = "src.handler"
         with mock.patch(f"{root}.queue.Queue.get", m1, create=True):
             m1.side_effect = self._mock_queue_get
             self.__worker.start()

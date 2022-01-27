@@ -7,7 +7,7 @@ import queue
 import time
 from threading import Thread, Event
 from typing import Any, Callable, Optional
-from src.thread_extension.control import ThreadControlMixin
+from src.control import ThreadControlMixin
 
 
 class CycleWorkerThread(Thread):

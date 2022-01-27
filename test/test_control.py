@@ -1,12 +1,12 @@
 import unittest
 from timeit import default_timer as timer
-from src.thread_extension import control
+from src import control
 
 
 class ThreadControlMixinClass(unittest.TestCase):
     """
     This class represents a wrapper class for all unittests related to the
-    ThreadControlMixin class within <src.thread_extension.control>.
+    ThreadControlMixin class within <src.control>.
     """
     def setUp(self):
         self._control = control.ThreadControlMixin()

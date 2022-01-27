@@ -6,7 +6,7 @@ import os
 import queue
 import time
 from typing import Set
-from src.thread_extension import handler
+from src import handler
 
 
 class NewFileTracker(handler.CycleWorkerThread):
