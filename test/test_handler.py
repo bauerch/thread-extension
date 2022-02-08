@@ -97,7 +97,7 @@ class CycleWorkerThreadClass(unittest.TestCase):
 
     def test_target_None(self):
         """
-        This test checks if an activate worker without a given work routine
+        This test checks if an active worker without a given work routine
         is permanently stopped immediately.
         """
         self.__worker = handler.CycleWorkerThread(target=None)
@@ -108,14 +108,14 @@ class CycleWorkerThreadClass(unittest.TestCase):
     def _verify_initial_state(self):
         self.assertFalse(self.__worker.is_alive())
         self.assertFalse(self.__worker.is_working())
-        self.assertFalse(self.__worker._control.is_running())
-        self.assertFalse(self.__worker._control.is_stopped())
+        self.assertFalse(self.__worker.is_running())
+        self.assertFalse(self.__worker.is_stopped())
         self.assertIn("initial", repr(self.__worker))
 
     def _verify_operative_state(self):
         self.assertTrue(self.__worker.is_alive())
-        self.assertTrue(self.__worker._control.is_running())
-        self.assertFalse(self.__worker._control.is_stopped())
+        self.assertTrue(self.__worker.is_running())
+        self.assertFalse(self.__worker.is_stopped())
         self.assertIn("started", repr(self.__worker))
         self.assertIn("running", repr(self.__worker))
 
@@ -124,8 +124,8 @@ class CycleWorkerThreadClass(unittest.TestCase):
             time.sleep(0.005)
         self.assertTrue(self.__worker.is_alive())
         self.assertFalse(self.__worker.is_working())
-        self.assertFalse(self.__worker._control.is_running())
-        self.assertFalse(self.__worker._control.is_stopped())
+        self.assertFalse(self.__worker.is_running())
+        self.assertFalse(self.__worker.is_stopped())
         self.assertIn("started", repr(self.__worker))
         self.assertIn("paused", repr(self.__worker))
 
@@ -133,8 +133,8 @@ class CycleWorkerThreadClass(unittest.TestCase):
         self.__worker.join(timeout=2.0)
         self.assertFalse(self.__worker.is_alive())
         self.assertFalse(self.__worker.is_working())
-        self.assertFalse(self.__worker._control.is_running())
-        self.assertTrue(self.__worker._control.is_stopped())
+        self.assertFalse(self.__worker.is_running())
+        self.assertTrue(self.__worker.is_stopped())
         self.assertIn("stopped", repr(self.__worker))
 
 
@@ -263,14 +263,14 @@ class TaskWorkerThreadClass(unittest.TestCase):
     def _verify_initial_state(self):
         self.assertFalse(self.__worker.is_alive())
         self.assertFalse(self.__worker.is_working())
-        self.assertFalse(self.__worker._control.is_running())
-        self.assertFalse(self.__worker._control.is_stopped())
+        self.assertFalse(self.__worker.is_running())
+        self.assertFalse(self.__worker.is_stopped())
         self.assertIn("initial", repr(self.__worker))
 
     def _verify_operative_state(self):
         self.assertTrue(self.__worker.is_alive())
-        self.assertTrue(self.__worker._control.is_running())
-        self.assertFalse(self.__worker._control.is_stopped())
+        self.assertTrue(self.__worker.is_running())
+        self.assertFalse(self.__worker.is_stopped())
         self.assertIn("started", repr(self.__worker))
         self.assertIn("running", repr(self.__worker))
 
@@ -279,8 +279,8 @@ class TaskWorkerThreadClass(unittest.TestCase):
             time.sleep(0.005)
         self.assertTrue(self.__worker.is_alive())
         self.assertFalse(self.__worker.is_working())
-        self.assertFalse(self.__worker._control.is_running())
-        self.assertFalse(self.__worker._control.is_stopped())
+        self.assertFalse(self.__worker.is_running())
+        self.assertFalse(self.__worker.is_stopped())
         self.assertIn("started", repr(self.__worker))
         self.assertIn("paused", repr(self.__worker))
 
@@ -288,8 +288,8 @@ class TaskWorkerThreadClass(unittest.TestCase):
         self.__worker.join(timeout=2.0)
         self.assertFalse(self.__worker.is_alive())
         self.assertFalse(self.__worker.is_working())
-        self.assertFalse(self.__worker._control.is_running())
-        self.assertTrue(self.__worker._control.is_stopped())
+        self.assertFalse(self.__worker.is_running())
+        self.assertTrue(self.__worker.is_stopped())
         self.assertIn("stopped", repr(self.__worker))
 
     def _mock_queue_get(self):

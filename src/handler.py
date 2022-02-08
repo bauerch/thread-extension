@@ -10,7 +10,7 @@ from typing import Any, Callable, Optional
 from src.control import ThreadControlMixin
 
 
-class CycleWorkerThread(Thread):
+class CycleWorkerThread(Thread, ThreadControlMixin):
     """
     This class represents a special thread type, which executes a predefined
     routine cyclically until a stop event is triggered.
@@ -26,8 +26,8 @@ class CycleWorkerThread(Thread):
         """
         Initializes CycleWorkerThread class.
         """
-        super().__init__(daemon=daemon)
-        self._control = ThreadControlMixin()
+        Thread.__init__(self, daemon=daemon)
+        ThreadControlMixin.__init__(self)
         self._timeout = timeout
         self._delay = delay
         self._target = target
@@ -39,18 +39,18 @@ class CycleWorkerThread(Thread):
     def __repr__(self) -> str:
         string = super().__repr__()
         if self.is_alive():
-            string = string[:-2] + f", {repr(self._control)})>"
+            string = string[:-2] + f", {repr(self.status)})>"
         return string
 
     def run(self) -> None:
         """
-        Defines the workers's concrete workflow.
+        Defines the worker's concrete workflow.
         """
-        self._control.set_start_state()
+        self.set_start_state()
         try:
             self.preparation()
-            while not self._control.is_stopped():
-                if not self._control.wait(self._timeout):
+            while not self.is_stopped():
+                if not self.wait(self._timeout):
                     self.stop()  # Force stoppage
                     break
                 self._task_done.clear()
@@ -61,7 +61,7 @@ class CycleWorkerThread(Thread):
                 time.sleep(self._delay)
             self.post_processing()
         finally:
-            self._control.set_end_state()
+            self.set_end_state()
             # Avoid a refcycle if the thread is running a function with
             # an argument that has a member that points to the thread.
             del self._target, self._args, self._kwargs
@@ -82,15 +82,6 @@ class CycleWorkerThread(Thread):
 
     def is_working(self):
         return not self._task_done.is_set()
-
-    def pause(self) -> None:
-        self._control.pause()
-
-    def resume(self) -> None:
-        self._control.resume()
-
-    def stop(self) -> None:
-        self._control.stop()
 
     @property
     def delay(self) -> float:
@@ -131,7 +122,7 @@ class CycleWorkerThread(Thread):
         """
 
 
-class TaskWorkerThread(Thread):
+class TaskWorkerThread(Thread, ThreadControlMixin):
     """
     This class represents a special thread type, which processes a stack of
     similar tasks one after the other.
@@ -145,8 +136,8 @@ class TaskWorkerThread(Thread):
         """
         Initializes TaskWorkerThread class.
         """
-        super().__init__(daemon=daemon)
-        self._control = ThreadControlMixin()
+        Thread.__init__(self, daemon=daemon)
+        ThreadControlMixin.__init__(self)
         self._timeout = timeout
         self._delay = delay
         self._queue = tasks
@@ -156,19 +147,19 @@ class TaskWorkerThread(Thread):
     def __repr__(self) -> str:
         string = super().__repr__()
         if self.is_alive():
-            string = string[:-2] + f", {repr(self._control)})>"
+            string = string[:-2] + f", {repr(self.status)})>"
         return string
 
     def run(self) -> None:
         """
-        Defines the workers's concrete workflow.
+        Defines the worker's concrete workflow.
         """
-        self._control.set_start_state()
+        self.set_start_state()
         try:
             self.preparation()
-            while not self._control.is_stopped():
+            while not self.is_stopped():
                 if self._queue.empty() or not \
-                        self._control.wait(self._timeout):
+                        self.wait(self._timeout):
                     self.stop()  # Force stoppage
                     break
                 self._task_done.clear()
@@ -184,7 +175,7 @@ class TaskWorkerThread(Thread):
                 time.sleep(self._delay)
             self.post_processing()
         finally:
-            self._control.set_end_state()
+            self.set_end_state()
 
     @abc.abstractmethod
     def work_on_task(self, task: Any) -> None:
@@ -194,15 +185,6 @@ class TaskWorkerThread(Thread):
 
     def is_working(self):
         return not self._task_done.is_set()
-
-    def pause(self) -> None:
-        self._control.pause()
-
-    def resume(self) -> None:
-        self._control.resume()
-
-    def stop(self) -> None:
-        self._control.stop()
 
     @property
     def delay(self) -> float:
