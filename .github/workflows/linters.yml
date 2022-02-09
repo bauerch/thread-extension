@@ -7,7 +7,7 @@ on:
     branches: [ main ]
 
 jobs:
-  build:
+  flake8:
 
     runs-on: windows-latest
 
