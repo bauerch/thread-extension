@@ -1,7 +1,6 @@
 """
 Thread-control extensions.
 """
-from examples import tracker
 from threading import Event
 from typing import Optional
 
