@@ -6,19 +6,21 @@ import os
 import queue
 import time
 from typing import Set
-from src import handler
+from src.handler import CycleWorkerThread
 
 
-class NewFileTracker(handler.CycleWorkerThread):
+class NewFileTracker(CycleWorkerThread):
     """
     This class checks periodically if new files of the given type are created
     in the given folder. As soon as new files are detected, they are put into
     `new_files` for further processing by other threads.
     """
-    def __init__(self,
-                 folder: str,
-                 f_type: str = "*",
-                 scan_interval: float = 0.0) -> None:
+    def __init__(
+            self,
+            folder: str,
+            f_type: str = "*",
+            scan_interval: float = 0.0
+    ) -> None:
         """
         Initializes the file tracker.
         """

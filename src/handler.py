@@ -1,4 +1,3 @@
-# pylint: disable=missing-function-docstring
 """
 Thread based handlers.
 """
@@ -6,7 +5,11 @@ import abc
 import queue
 import time
 from threading import Thread, Event
-from typing import Any, Callable, Optional
+from typing import (
+    Any,
+    Callable,
+    Optional
+)
 from src.control import ThreadControlMixin
 
 
@@ -15,14 +18,15 @@ class CycleWorkerThread(Thread, ThreadControlMixin):
     This class represents a special thread type, which executes a predefined
     routine cyclically until a stop event is triggered.
     """
-    def __init__(self,
-                 delay: float = 0.0,
-                 timeout: float = 1000.0,
-                 target: Optional[Callable] = None,
-                 args: tuple = (),
-                 kwargs=None,
-                 daemon: Optional[bool] = False
-                 ) -> None:
+    def __init__(
+            self,
+            delay: float = 0.0,
+            timeout: float = 1000.0,
+            target: Optional[Callable] = None,
+            args: tuple = (),
+            kwargs=None,
+            daemon: Optional[bool] = False
+    ) -> None:
         """
         Initializes CycleWorkerThread class.
         """
@@ -127,12 +131,13 @@ class TaskWorkerThread(Thread, ThreadControlMixin):
     This class represents a special thread type, which processes a stack of
     similar tasks one after the other.
     """
-    def __init__(self,
-                 tasks: queue.Queue,
-                 delay: float = 0.0,
-                 timeout: float = 1000.0,
-                 daemon: Optional[bool] = False
-                 ) -> None:
+    def __init__(
+            self,
+            tasks: queue.Queue,
+            delay: float = 0.0,
+            timeout: float = 1000.0,
+            daemon: Optional[bool] = False
+    ) -> None:
         """
         Initializes TaskWorkerThread class.
         """
