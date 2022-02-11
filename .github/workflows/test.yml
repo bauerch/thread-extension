@@ -23,6 +23,6 @@ jobs:
         pip install coverage
     - name: Run tests
       run: |
-        python -m coverage run --rcfile=.coveragerc -m unittest discover -s test -p "test_*.py" -b
+        python -m coverage run --rcfile=.coveragerc -m unittest discover -s tests -p "test_*.py" -b
         python -m coverage report --rcfile=.coveragerc -m
         del .coverage
