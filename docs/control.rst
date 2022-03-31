@@ -1,7 +1,7 @@
 :mod:`control` --- thread control mixin
 =======================================
 
-.. py:currentmodule:: src.control
+.. py:currentmodule:: src.thread_extension.control
 
 ThreadControlMixin Objects
 --------------------------

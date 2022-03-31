@@ -10,7 +10,7 @@ from typing import (
     Callable,
     Optional
 )
-from src.control import ThreadControlMixin
+from src.thread_extension.control import ThreadControlMixin
 
 
 class CycleWorkerThread(Thread, ThreadControlMixin):
