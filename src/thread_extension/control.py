@@ -16,7 +16,7 @@ class ThreadControlMixin:
         self.__running = Event()
 
     @property
-    def status(self):
+    def status(self) -> str:
         status = "running" if self.is_running() else "paused"
         if not self.__started.is_set():
             status = "initial"
