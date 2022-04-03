@@ -13,7 +13,7 @@ batch jobs processed in the background.
 
 The following state diagram illustrates the control flow of the mixin.
 
-.. image:: resources/state_diagram_thread_control_mixin.png
+.. image:: _static/state_diagram_thread_control_mixin.png
   :scale: 54%
   :alt: State Diagram
 
