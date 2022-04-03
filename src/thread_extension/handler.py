@@ -41,21 +41,20 @@ class CycleWorkerThread(Thread, ThreadControlMixin):
         self._task_done.set()
 
     def __repr__(self) -> str:
-        string = super().__repr__()
+        string: str = super().__repr__()
         if self.is_alive():
-            string = string[:-2] + f", {repr(self.status)})>"
+            string = string[:-2] + f", {repr(self.state)})>"
         return string
 
     def run(self) -> None:
         """
         Defines the worker's concrete workflow.
         """
-        self.set_start_state()
+        self.running()
         try:
             self.preparation()
             while not self.is_stopped():
                 if not self.wait(self._timeout):
-                    self.stop()  # Force stoppage
                     break
                 self._task_done.clear()
                 try:
@@ -65,7 +64,7 @@ class CycleWorkerThread(Thread, ThreadControlMixin):
                 time.sleep(self._delay)
             self.post_processing()
         finally:
-            self.set_end_state()
+            self.stop()
             # Avoid a refcycle if the thread is running a function with
             # an argument that has a member that points to the thread.
             del self._target, self._args, self._kwargs
@@ -150,29 +149,27 @@ class TaskWorkerThread(Thread, ThreadControlMixin):
         self._task_done.set()
 
     def __repr__(self) -> str:
-        string = super().__repr__()
+        string: str = super().__repr__()
         if self.is_alive():
-            string = string[:-2] + f", {repr(self.status)})>"
+            string = string[:-2] + f", {repr(self.state)})>"
         return string
 
     def run(self) -> None:
         """
         Defines the worker's concrete workflow.
         """
-        self.set_start_state()
+        self.running()
         try:
             self.preparation()
             while not self.is_stopped():
-                if self._queue.empty() or not \
-                        self.wait(self._timeout):
-                    self.stop()  # Force stoppage
+                if self._queue.empty() or not self.wait(self._timeout):
                     break
                 self._task_done.clear()
                 try:
                     task = self._queue.get()
                     self.work_on_task(task)
                 except queue.Empty:
-                    self.stop()
+                    break
                 else:
                     self._queue.task_done()
                 finally:
@@ -180,7 +177,7 @@ class TaskWorkerThread(Thread, ThreadControlMixin):
                 time.sleep(self._delay)
             self.post_processing()
         finally:
-            self.set_end_state()
+            self.stop()
 
     @abc.abstractmethod
     def work_on_task(self, task: Any) -> None:

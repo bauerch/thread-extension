@@ -69,7 +69,6 @@ class CycleWorkerThreadClass(unittest.TestCase):
         This test checks if an active worker can be forced to stop working
         permanently during pause.
         """
-        self.__worker.timeout = 1.0
         self._verify_initial_state()
 
         self.__worker.start()
@@ -207,7 +206,6 @@ class TaskWorkerThreadClass(unittest.TestCase):
         This test checks if an active worker can be forced to stop working
         permanently during pause.
         """
-        self.__worker.timeout = 1.0
         self._verify_initial_state()
 
         self.__worker.start()

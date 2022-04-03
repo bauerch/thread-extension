@@ -1,6 +1,7 @@
 import unittest
 from timeit import default_timer as timer
-from src.thread_extension import control
+from transitions.core import MachineError
+from src.thread_extension.control import ThreadControlMixin
 
 
 class ThreadControlMixinClass(unittest.TestCase):
@@ -9,104 +10,107 @@ class ThreadControlMixinClass(unittest.TestCase):
     ThreadControlMixin class within <src.thread_extension.control>.
     """
     def setUp(self):
-        self._control = control.ThreadControlMixin()
+        self._mixin = ThreadControlMixin()
 
     def tearDown(self):
-        del self._control
+        del self._mixin
 
-    def test_additional_thread_control_states(self):
+    def test_standard_state_transitions(self):
         """
         This test checks the correct transition into all possible states.
         """
-        self.assertFalse(self._control.is_running())
-        self.assertFalse(self._control.is_stopped())
-        self.assertEqual(self._control.status, "initial")
-        self._control.set_start_state()
-        self.assertTrue(self._control.is_running())
-        self.assertFalse(self._control.is_stopped())
-        self.assertEqual(self._control.status, "running")
-        self._control.pause()
-        self.assertFalse(self._control.is_running())
-        self.assertFalse(self._control.is_stopped())
-        self.assertEqual(self._control.status, "paused")
-        self._control.resume()
-        self.assertTrue(self._control.is_running())
-        self.assertFalse(self._control.is_stopped())
-        self.assertEqual(self._control.status, "running")
-        self._control.pause()
-        self._control.stop()
-        self.assertTrue(self._control.is_running())
-        self.assertTrue(self._control.is_stopped())
-        self.assertEqual(self._control.status, "stopped")
-        self._control.set_end_state()
-        self.assertFalse(self._control.is_running())
-        self.assertTrue(self._control.is_stopped())
-        self.assertEqual(self._control.status, "stopped")
+        self.assertEqual(self._mixin.state, "initial")
+        self.assertFalse(self._mixin._running.is_set())
+        self._mixin.running()
+        self.assertEqual(self._mixin.state, "running")
+        self.assertTrue(self._mixin._running.is_set())
+        self._mixin.pause()
+        self.assertEqual(self._mixin.state, "paused")
+        self.assertFalse(self._mixin._running.is_set())
+        self._mixin.pause()
+        self.assertEqual(self._mixin.state, "paused")
+        self.assertFalse(self._mixin._running.is_set())
+        self._mixin.resume()
+        self.assertEqual(self._mixin.state, "running")
+        self.assertTrue(self._mixin._running.is_set())
+        self._mixin.resume()
+        self.assertEqual(self._mixin.state, "running")
+        self.assertTrue(self._mixin._running.is_set())
+        self._mixin.stop()
+        self.assertEqual(self._mixin.state, "stopped")
+        self.assertFalse(self._mixin._running.is_set())
+        self._mixin.stop()
+        self.assertEqual(self._mixin.state, "stopped")
+        self.assertFalse(self._mixin._running.is_set())
 
-    def test_paused_thread_timeout(self):
+    def test_wait_timeout(self):
         """
-        The test checks if a paused thread is released once the timeout occurs.
+        The test checks if the wait block is released once the timeout occurs.
         """
-        self._control.set_start_state()
-        self._control.pause()
         start = timer()
-        self._control.wait(timeout=1)
+        self._mixin.wait(timeout=1)
         end = timer()
         self.assertTrue(1.0 <= (end - start) < 1.1)
 
-    def test_pre_start_exceptions(self):
+    def test_initial_state_triggers_exceptions(self):
         """
-        This test checks all invalid calls before the thread is started.
+        This test checks all invalid triggers while the state machine is in INITIAL state.
         """
-        with self.assertRaises(RuntimeError) as context:
-            self._control.pause()
-        exception = "Cannot pause thread before it is started"
+        with self.assertRaises(MachineError) as context:
+            self._mixin.pause()
+        exception = "Can't trigger event pause from state initial!"
         self.assertTrue(exception in str(context.exception))
 
-        with self.assertRaises(RuntimeError) as context:
-            self._control.resume()
-        exception = "Cannot resume thread before it is started"
+        with self.assertRaises(MachineError) as context:
+            self._mixin.resume()
+        exception = "Can't trigger event resume from state initial!"
         self.assertTrue(exception in str(context.exception))
 
-        with self.assertRaises(RuntimeError) as context:
-            self._control.stop()
-        exception = "Cannot stop thread before it is started"
+        with self.assertRaises(MachineError) as context:
+            self._mixin.stop()
+        exception = "Can't trigger event stop from state initial!"
         self.assertTrue(exception in str(context.exception))
 
-        with self.assertRaises(RuntimeError) as context:
-            self._control.wait(timeout=1)
-        exception = "Cannot wait thread before it is started"
-        self.assertTrue(exception in str(context.exception))
-
-    def test_post_start_exceptions(self):
+    def test_running_state_triggers_exceptions(self):
         """
-        This test checks all invalid calls after the thread is stared.
+        This test checks all invalid triggers while the state machine is in RUNNING state.
         """
-        self._control.set_start_state()
-
-        with self.assertRaises(RuntimeError) as context:
-            self._control.set_start_state()
-        exception = "thread can only be started once"
+        self._mixin.running()
+        with self.assertRaises(MachineError) as context:
+            self._mixin.running()
+        exception = "Can't trigger event running from state running!"
         self.assertTrue(exception in str(context.exception))
 
-        self._control.stop()
-
-        with self.assertRaises(RuntimeError) as context:
-            self._control.pause()
-        exception = "Cannot pause thread after it is stopped"
+    def test_paused_state_triggers_exceptions(self):
+        """
+        This test checks all invalid triggers while the state machine is in PAUSED state.
+        """
+        self._mixin.running()
+        self._mixin.pause()
+        with self.assertRaises(MachineError) as context:
+            self._mixin.running()
+        exception = "Can't trigger event running from state paused!"
         self.assertTrue(exception in str(context.exception))
 
-        with self.assertRaises(RuntimeError) as context:
-            self._control.resume()
-        exception = "Cannot resume thread after it is stopped"
+    def test_stopped_state_triggers_exceptions(self):
+        """
+        This test checks all invalid triggers while the state machine is in STOPPED state.
+        """
+        self._mixin.running()
+        self._mixin.pause()
+        self._mixin.stop()
+
+        with self.assertRaises(MachineError) as context:
+            self._mixin.running()
+        exception = "Can't trigger event running from state stopped!"
         self.assertTrue(exception in str(context.exception))
 
-        with self.assertRaises(RuntimeError) as context:
-            self._control.wait(timeout=1)
-        exception = "Cannot wait thread after it is stopped"
+        with self.assertRaises(MachineError) as context:
+            self._mixin.pause()
+        exception = "Can't trigger event pause from state stopped!"
         self.assertTrue(exception in str(context.exception))
 
-        with self.assertRaises(RuntimeError) as context:
-            self._control.stop()
-        exception = "thread can only be stopped once"
+        with self.assertRaises(MachineError) as context:
+            self._mixin.resume()
+        exception = "Can't trigger event resume from state stopped!"
         self.assertTrue(exception in str(context.exception))
