@@ -11,74 +11,74 @@ class ThreadControlMixin(Machine):
     This class implements a state machine allowing thread objects to make use of
     additional control states to enable pause, resume and stop events at runtime.
     """
-    INITIAL = State("initial")
-    RUNNING = State("running")
-    STOPPED = State("stopped")
-    PAUSED = State("paused")
-
-    def after_stopped_state(self) -> None:
-        if not self._running.is_set():
-            # Release lock by setting event flag
-            self._running.set()
-        self._running.clear()
-
-    def before_running_state(self) -> None:
-        self._running.set()
-
-    def before_paused_state(self) -> None:
-        self._running.clear()
-
-    def wait(self, timeout: Optional[float] = None) -> bool:
-        return self._running.wait(timeout=timeout)
+    _INITIAL = State("initial")
+    _RUNNING = State("running")
+    _STOPPED = State("stopped")
+    _PAUSED = State("paused")
 
     def __init__(self) -> None:
         self._running = Event()
         Machine.__init__(
             self,
             states=[
-                self.INITIAL,
-                self.RUNNING,
-                self.STOPPED,
-                self.PAUSED
+                self._INITIAL,
+                self._RUNNING,
+                self._STOPPED,
+                self._PAUSED
             ],
-            initial=self.INITIAL.name
+            initial=self._INITIAL.name
         )
         self.add_transition(
             trigger="running",
-            source=self.INITIAL.name,
-            dest=self.RUNNING.name,
-            before="before_running_state"
+            source=self._INITIAL.name,
+            dest=self._RUNNING.name,
+            before="_before_running_state"
         )
         self.add_transition(
             trigger="pause",
-            source=self.PAUSED.name,
+            source=self._PAUSED.name,
             dest="="
         )
         self.add_transition(
             trigger="pause",
-            source=self.RUNNING.name,
-            dest=self.PAUSED.name,
-            before="before_paused_state"
+            source=self._RUNNING.name,
+            dest=self._PAUSED.name,
+            before="_before_paused_state"
         )
         self.add_transition(
             trigger="resume",
-            source=self.RUNNING.name,
+            source=self._RUNNING.name,
             dest="="
         )
         self.add_transition(
             trigger="resume",
-            source=self.PAUSED.name,
-            dest=self.RUNNING.name,
-            before="before_running_state"
+            source=self._PAUSED.name,
+            dest=self._RUNNING.name,
+            before="_before_running_state"
         )
         self.add_transition(
             trigger="stop",
-            source=self.STOPPED.name,
+            source=self._STOPPED.name,
             dest="="
         )
         self.add_transition(
             trigger="stop",
-            source=[self.RUNNING.name, self.PAUSED.name],
-            dest=self.STOPPED.name,
-            after="after_stopped_state"
+            source=[self._RUNNING.name, self._PAUSED.name],
+            dest=self._STOPPED.name,
+            after="_after_stopped_state"
         )
+
+    def wait(self, timeout: Optional[float] = None) -> bool:
+        return self._running.wait(timeout=timeout)
+
+    def _after_stopped_state(self) -> None:
+        if not self._running.is_set():
+            # Release lock by setting event flag
+            self._running.set()
+        self._running.clear()
+
+    def _before_running_state(self) -> None:
+        self._running.set()
+
+    def _before_paused_state(self) -> None:
+        self._running.clear()
