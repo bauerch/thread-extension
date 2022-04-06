@@ -83,7 +83,7 @@ class CycleWorkerThread(Thread, ThreadControlMixin):
         else:
             self.stop()
 
-    def is_working(self):
+    def is_working(self) -> bool:
         return not self._task_done.is_set()
 
     @property
@@ -185,7 +185,7 @@ class TaskWorkerThread(Thread, ThreadControlMixin):
         Abstract method representing the worker's activity on all task.
         """
 
-    def is_working(self):
+    def is_working(self) -> bool:
         return not self._task_done.is_set()
 
     @property

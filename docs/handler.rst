@@ -120,7 +120,7 @@ TaskWorker
 
       Defines the worker's concrete workflow.
 
-   .. method:: work_on_task()
+   .. method:: work_on_task(task)
 
       Abstract method representing the worker's activity on all task.
 
