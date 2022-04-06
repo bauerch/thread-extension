@@ -21,9 +21,6 @@ CycleWorker
    worker.start()
    worker.join()
 
-Implementations should subclass the :class:`CycleWorkerThread` class and
-overwrite the :meth:`~CycleWorkerThread.work_routine` method:
-
 .. code-block:: python
 
    import time
@@ -84,8 +81,6 @@ overwrite the :meth:`~CycleWorkerThread.work_routine` method:
 
 TaskWorker
 ----------
-Implementations should subclass the :class:`TaskWorkerThread` class and
-overwrite the :meth:`~TaskWorkerThread.work_on_task` method:
 
 .. code-block:: python
 
