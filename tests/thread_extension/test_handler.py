@@ -48,7 +48,7 @@ class CycleWorkerThreadClass(unittest.TestCase):
 
     def test_start_pause_resume_stop(self):
         """
-        This test checks if an active worker can transition into all states.
+        This test checks if a worker can transition into all states.
         """
         self._verify_initial_state()
 
