@@ -53,51 +53,49 @@ class CycleWorkerThreadClass(unittest.TestCase):
         self._verify_initial_state()
 
         self.__worker.start()
-        self._verify_operative_state()
+        self._verify_running_state()
 
         self.__worker.pause()
-        self._verify_pause_state()
+        self._verify_paused_state()
 
         self.__worker.resume()
-        self._verify_operative_state()
+        self._verify_running_state()
 
         self.__worker.stop()
         self._verify_stopped_state()
 
     def test_start_pause_stop(self):
         """
-        This test checks if an active worker can be forced to stop working
-        permanently during pause.
+        This test checks if a worker can be forced to stop working during PAUSED state.
         """
         self._verify_initial_state()
 
         self.__worker.start()
-        self._verify_operative_state()
+        self._verify_running_state()
 
         self.__worker.pause()
-        self._verify_pause_state()
+        self._verify_paused_state()
 
         self.__worker.stop()
         self._verify_stopped_state()
 
     def test_start_pause_timeout(self):
         """
-        This test checks if an active worker automatically stops working
-        permanently once the maximum pause time passed.
+        This test checks if a worker automatically stops working once the maximum
+        pause time passed.
         """
         self.__worker.timeout = 1.0
         self._verify_initial_state()
 
         self.__worker.start()
-        self._verify_operative_state()
+        self._verify_running_state()
 
         self.__worker.pause()
         self._verify_stopped_state()
 
     def test_target_None(self):
         """
-        This test checks if an active worker without a given work routine
-        is permanently stopped immediately.
+        This test checks if a worker without a work routine is stopped immediately.
         """
         self.__worker = handler.CycleWorkerThread(target=None)
         self._verify_initial_state()
@@ -107,24 +105,21 @@ class CycleWorkerThreadClass(unittest.TestCase):
     def _verify_initial_state(self):
         self.assertFalse(self.__worker.is_alive())
         self.assertFalse(self.__worker.is_working())
-        self.assertFalse(self.__worker.is_running())
-        self.assertFalse(self.__worker.is_stopped())
+        self.assertTrue(self.__worker.is_initial())
         self.assertIn("initial", repr(self.__worker))
 
-    def _verify_operative_state(self):
+    def _verify_running_state(self):
         self.assertTrue(self.__worker.is_alive())
         self.assertTrue(self.__worker.is_running())
-        self.assertFalse(self.__worker.is_stopped())
         self.assertIn("started", repr(self.__worker))
         self.assertIn("running", repr(self.__worker))
 
-    def _verify_pause_state(self):
+    def _verify_paused_state(self):
         while self.__worker.is_working():
             time.sleep(0.005)
         self.assertTrue(self.__worker.is_alive())
         self.assertFalse(self.__worker.is_working())
-        self.assertFalse(self.__worker.is_running())
-        self.assertFalse(self.__worker.is_stopped())
+        self.assertTrue(self.__worker.is_paused())
         self.assertIn("started", repr(self.__worker))
         self.assertIn("paused", repr(self.__worker))
 
@@ -132,7 +127,6 @@ class CycleWorkerThreadClass(unittest.TestCase):
         self.__worker.join(timeout=2.0)
         self.assertFalse(self.__worker.is_alive())
         self.assertFalse(self.__worker.is_working())
-        self.assertFalse(self.__worker.is_running())
         self.assertTrue(self.__worker.is_stopped())
         self.assertIn("stopped", repr(self.__worker))
 
@@ -185,56 +179,55 @@ class TaskWorkerThreadClass(unittest.TestCase):
 
     def test_start_pause_resume_stop(self):
         """
-        This test checks if an active worker can transition into all states.
+        This test checks if a worker can transition into all states.
         """
         self._verify_initial_state()
 
         self.__worker.start()
-        self._verify_operative_state()
+        self._verify_running_state()
 
         self.__worker.pause()
-        self._verify_pause_state()
+        self._verify_paused_state()
 
         self.__worker.resume()
-        self._verify_operative_state()
+        self._verify_running_state()
 
         self.__worker.stop()
         self._verify_stopped_state()
 
     def test_start_pause_stop(self):
         """
-        This test checks if an active worker can be forced to stop working
-        permanently during pause.
+        This test checks if a worker can be forced to stop working during PAUSED state.
         """
         self._verify_initial_state()
 
         self.__worker.start()
-        self._verify_operative_state()
+        self._verify_running_state()
 
         self.__worker.pause()
-        self._verify_pause_state()
+        self._verify_paused_state()
 
         self.__worker.stop()
         self._verify_stopped_state()
 
     def test_start_pause_timeout(self):
         """
-        This test checks if an active worker automatically stops working
-        permanently once the maximum pause time passed.
+        This test checks if a worker automatically stops working once the maximum
+        pause time passed.
         """
         self.__worker.timeout = 1.0
         self._verify_initial_state()
 
         self.__worker.start()
-        self._verify_operative_state()
+        self._verify_running_state()
 
         self.__worker.pause()
         self._verify_stopped_state()
 
     def test_worker_end_no_tasks_left(self):
         """
-        This test checks if an active worker automatically stops working once
-        all tasks are done.
+        This test checks if a worker automatically stops working once all tasks
+        are done.
         """
         tasks = queue.Queue()
         tasks.put(1)
@@ -244,8 +237,8 @@ class TaskWorkerThreadClass(unittest.TestCase):
 
     def test_worker_end_queue_empty_exception(self):
         """
-        This test checks if an active worker stops working once an empty queue
-        exception was caught.
+        This test checks if a worker stops working once an empty queue exception
+        was caught.
         """
         tasks = queue.Queue()
         tasks.put(1)
@@ -261,24 +254,21 @@ class TaskWorkerThreadClass(unittest.TestCase):
     def _verify_initial_state(self):
         self.assertFalse(self.__worker.is_alive())
         self.assertFalse(self.__worker.is_working())
-        self.assertFalse(self.__worker.is_running())
-        self.assertFalse(self.__worker.is_stopped())
+        self.assertTrue(self.__worker.is_initial())
         self.assertIn("initial", repr(self.__worker))
 
-    def _verify_operative_state(self):
+    def _verify_running_state(self):
         self.assertTrue(self.__worker.is_alive())
         self.assertTrue(self.__worker.is_running())
-        self.assertFalse(self.__worker.is_stopped())
         self.assertIn("started", repr(self.__worker))
         self.assertIn("running", repr(self.__worker))
 
-    def _verify_pause_state(self):
+    def _verify_paused_state(self):
         while self.__worker.is_working():
             time.sleep(0.005)
         self.assertTrue(self.__worker.is_alive())
         self.assertFalse(self.__worker.is_working())
-        self.assertFalse(self.__worker.is_running())
-        self.assertFalse(self.__worker.is_stopped())
+        self.assertTrue(self.__worker.is_paused())
         self.assertIn("started", repr(self.__worker))
         self.assertIn("paused", repr(self.__worker))
 
@@ -286,7 +276,6 @@ class TaskWorkerThreadClass(unittest.TestCase):
         self.__worker.join(timeout=2.0)
         self.assertFalse(self.__worker.is_alive())
         self.assertFalse(self.__worker.is_working())
-        self.assertFalse(self.__worker.is_running())
         self.assertTrue(self.__worker.is_stopped())
         self.assertIn("stopped", repr(self.__worker))
 
