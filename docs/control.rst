@@ -97,7 +97,7 @@ on everything works like a conventional thread.
 
    .. method:: wait(timeout=None)
 
-      This method waits until a state change from ``paused`` to ``running`` happens.
+      This method waits until the object is in ``running`` state.
 
       When the *timeout* argument is present and not ``None``, it should be a
       floating point number specifying a timeout for the operation in seconds
