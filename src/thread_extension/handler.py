@@ -103,8 +103,8 @@ class CycleWorkerThread(Thread, ThreadControlMixin):
     @property
     def timeout(self) -> float:
         """
-        Indicates how much time the worker is allowed to pause before
-        the worker is automatically forced to stop.
+        Indicates how much time the worker is allowed to pause before the
+        worker is automatically forced to stop.
         """
         return self._timeout
 
@@ -205,8 +205,8 @@ class TaskWorkerThread(Thread, ThreadControlMixin):
     @property
     def timeout(self) -> float:
         """
-        Indicates how much time the worker is allowed to pause before
-        the worker is automatically forced to stop.
+        Indicates how much time the worker is allowed to pause before the
+        worker is automatically forced to stop.
         """
         return self._timeout
 
