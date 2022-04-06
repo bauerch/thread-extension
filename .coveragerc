@@ -2,7 +2,6 @@
 [run]
 branch = True
 source = src
-omit = # Excludes all files located in the util directory
 
 [report]
 exclude_lines =
