@@ -17,7 +17,7 @@ sys.path.insert(0, os.path.abspath('.'))
 
 # -- Project information -----------------------------------------------------
 
-project = 'thread-extension'
+project = 'worker-threads'
 copyright = '2022, bauer'
 author = 'bauer'
 

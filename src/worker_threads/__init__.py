@@ -3,7 +3,7 @@ Thread-based handler.
 """
 from .version import __version__
 from .control import ThreadControlMixin
-from .handler import (
+from .core import (
     CycleWorkerThread,
     TaskWorkerThread
 )

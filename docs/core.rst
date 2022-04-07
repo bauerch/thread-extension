@@ -1,7 +1,7 @@
-:mod:`handler` --- threads
-==========================
+:mod:`core` --- worker-threads
+==============================
 
-.. py:currentmodule:: src.thread_extension.handler
+.. py:currentmodule:: src.worker_threads.core
 
 
 CycleWorker
@@ -67,12 +67,11 @@ CycleWorker
 
    .. method:: is_working()
 
-      Returns ```True``` if the worker is running a routine, ```False``` otherwise.
+      Returns ``True`` if the worker is running a routine, ``False`` otherwise.
 
    .. method:: preparation()
 
       Optional preparatory steps for the worker to perform before starting.
-
 
    .. method:: post_processing()
 
@@ -125,7 +124,7 @@ TaskWorker
 
    .. method:: is_working()
 
-      Returns ```True``` if the worker is running a task, ```False``` otherwise.
+      Returns ``True`` if the worker is running a task, ``False`` otherwise.
 
    .. method:: preparation()
 

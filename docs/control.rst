@@ -1,7 +1,7 @@
 :mod:`control` --- thread control mixin
 =======================================
 
-.. py:currentmodule:: src.thread_extension.control
+.. py:currentmodule:: src.worker_threads.control
 
 The :class:`ThreadControlMixin` class extends typical `Threads objects <https://docs.python.org
 /3/library/threading.html#thread-objects>`_ by adding a state machine. It allows thread objects

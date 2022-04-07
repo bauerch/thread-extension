@@ -1,16 +1,17 @@
-Welcome to thread-extension's documentation!
-============================================
+Welcome to worker-threads documentation!
+========================================
 TBD.
 
 Dependencies
 ============
 - Python 3.10+
+- transitions>=0.8.11
 
 Table Of Contents
 =================
 .. toctree::
    :name: master_toc
-   :maxdepth: 2
+   :maxdepth: 1
 
    control.rst
-   handler.rst
+   core.rst

@@ -3,7 +3,7 @@ import time
 import unittest
 import unittest.mock as mock
 from typing import Union
-from src.examples import tracker
+from src.examples.tracker import NewFileTracker
 
 
 # As defined in os module
@@ -36,7 +36,7 @@ class NewFileTrackerClass(unittest.TestCase):
         m = mock.Mock()
         with mock.patch(f"{self._MODULE_PATH}.glob.glob", m, create=True):
             m.return_value = []
-            my_tracker = tracker.NewFileTracker("dir_path")
+            my_tracker = NewFileTracker("dir_path")
             my_tracker.start()
             time.sleep(0.1)
             new_files = my_tracker.new_files
@@ -61,7 +61,7 @@ class NewFileTrackerClass(unittest.TestCase):
             # 1) ###############################################################
             m1.side_effect = self._mock_getctime
             m2.return_value = self._FILES
-            my_tracker = tracker.NewFileTracker(self._ROOT)
+            my_tracker = NewFileTracker(self._ROOT)
             my_tracker.start()
             time.sleep(0.1)
             new_files = my_tracker.new_files

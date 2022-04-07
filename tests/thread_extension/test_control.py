@@ -1,13 +1,13 @@
 import unittest
 from timeit import default_timer as timer
 from transitions.core import MachineError
-from src.thread_extension.control import ThreadControlMixin
+from src.worker_threads.control import ThreadControlMixin
 
 
 class ThreadControlMixinClass(unittest.TestCase):
     """
     This class represents a wrapper class for all unittests related to the
-    ThreadControlMixin class within <src.thread_extension.control>.
+    ThreadControlMixin class within <src.worker_threads.control>.
     """
     def setUp(self):
         self._mixin = ThreadControlMixin()

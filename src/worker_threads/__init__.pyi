@@ -1,5 +1,5 @@
 from .control import ThreadControlMixin
-from .handler import (
+from .core import (
     CycleWorkerThread,
     TaskWorkerThread
 )

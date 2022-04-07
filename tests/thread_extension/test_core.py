@@ -2,13 +2,16 @@ import queue
 import time
 import unittest
 from unittest import mock
-from src.thread_extension import handler
+from src.worker_threads.core import (
+    CycleWorkerThread,
+    TaskWorkerThread
+)
 
 
 class CycleWorkerThreadClass(unittest.TestCase):
     """
     This class represents a wrapper class for all unittests related to the
-    CycleWorkerThread class within <src.thread_extension.handler>.
+    CycleWorkerThread class within <src.worker_threads.core>.
     """
     @staticmethod
     def run_routine() -> None:
@@ -19,7 +22,7 @@ class CycleWorkerThreadClass(unittest.TestCase):
         time.sleep(0.1)
 
     def setUp(self):
-        self.__worker = handler.CycleWorkerThread(target=self.run_routine)
+        self.__worker = CycleWorkerThread(target=self.run_routine)
 
     def tearDown(self):
         del self.__worker
@@ -97,7 +100,7 @@ class CycleWorkerThreadClass(unittest.TestCase):
         """
         This test checks if a worker without a work routine is stopped immediately.
         """
-        self.__worker = handler.CycleWorkerThread(target=None)
+        self.__worker = CycleWorkerThread(target=None)
         self._verify_initial_state()
         self.__worker.start()
         self._verify_stopped_state()
@@ -134,9 +137,9 @@ class CycleWorkerThreadClass(unittest.TestCase):
 class TaskWorkerThreadClass(unittest.TestCase):
     """
     This class represents a wrapper class for all unittests related to the
-    TaskWorkerThread class within <src.thread_extension.handler>.
+    TaskWorkerThread class within <src.worker_threads.core>.
     """
-    class SpecificTaskWorker(handler.TaskWorkerThread):
+    class SpecificTaskWorker(TaskWorkerThread):
         """
         Simulating a specific worker, that needs 100 ms to finish one task.
         """
@@ -245,7 +248,7 @@ class TaskWorkerThreadClass(unittest.TestCase):
         self.__worker = self.SpecificTaskWorker(tasks)
 
         m1 = mock.Mock()
-        root = "src.thread_extension.handler"
+        root = "src.worker_threads.core"
         with mock.patch(f"{root}.queue.Queue.get", m1, create=True):
             m1.side_effect = self._mock_queue_get
             self.__worker.start()
