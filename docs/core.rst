@@ -9,21 +9,23 @@ CycleWorker
 
 .. code-block:: python
 
-   import time
-   from handler import CycleWorkerThread
+   from worker_threads import CycleWorkerThread
 
 
-   def run_routine(self) -> None:
+   def run_routine() -> None:
        pass  # Put your code here
+
 
    worker = CycleWorkerThread(target=run_routine)
    worker.start()
+   worker.join(timeout=2)
+   worker.stop()
    worker.join()
 
 .. code-block:: python
 
-   import time
-   from handler import CycleWorkerThread
+   from worker_threads import CycleWorkerThread
+
 
    class MyCycleWorker(CycleWorkerThread):
        def __init__(self) -> None:
@@ -32,11 +34,14 @@ CycleWorker
        def run_routine(self) -> None:
            pass  # Put your code here
 
+
    worker = MyCycleWorker()
    worker.start()
+   worker.join(timeout=2)
+   worker.stop()
    worker.join()
 
-.. class:: CycleWorkerThread(delay=0.0, timeout= 1000.0, target=None, args=(), kwargs={}, daemon=False)
+.. class:: CycleWorkerThread(delay=0.0, timeout=1000.0, target=None, args=(), kwargs={}, daemon=None)
 
     This class represents a special thread type, which executes a predefined routine
     cyclically until a stop event is triggered.
@@ -83,23 +88,25 @@ TaskWorker
 .. code-block:: python
 
    import queue
-   from handler import TaskWorkerThread
+   from worker_threads import TaskWorkerThread
+
 
    class MyTaskWorker(TaskWorkerThread):
        def __init__(self, tasks: queue.Queue) -> None:
            super().__init__(tasks)
 
-       def run_task(self, task: str) -> None:
+       def run_task(self, task) -> None:
            pass  # Put your code here
 
+
    my_tasks = queue.Queue()
-   for nr in ["1", "2", "3"]:
-       my_tasks.put(nr)
+   for i in range(1000):
+       my_tasks.put(i)
    worker = MyTaskWorker(my_tasks)
    worker.start()
    worker.join()
 
-.. class:: TaskWorkerThread(tasks, delay=0.0, timeout= 1000.0, daemon=False)
+.. class:: TaskWorkerThread(tasks, delay=0.0, timeout=1000.0, daemon=None)
 
     This class represents a special thread type, which processes a stack of
     similar tasks one after the other.

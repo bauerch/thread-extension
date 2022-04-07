@@ -25,7 +25,7 @@ class CycleWorkerThread(Thread, ThreadControlMixin):
             target: Optional[Callable] = None,
             args: tuple = (),
             kwargs=None,
-            daemon: Optional[bool] = False
+            daemon: Optional[bool] = None
     ) -> None:
         """
         Initializes CycleWorkerThread class.
@@ -135,7 +135,7 @@ class TaskWorkerThread(Thread, ThreadControlMixin):
             tasks: queue.Queue,
             delay: float = 0.0,
             timeout: float = 1000.0,
-            daemon: Optional[bool] = False
+            daemon: Optional[bool] = None
     ) -> None:
         """
         Initializes TaskWorkerThread class.
