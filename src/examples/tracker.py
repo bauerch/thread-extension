@@ -50,7 +50,7 @@ class NewFileTracker(CycleWorkerThread):
         self.__ignored = {file for file in glob.glob(self.__pattern) if
                           os.path.getctime(file) < self.__start_time}
 
-    def work_routine(self) -> None:
+    def run_routine(self) -> None:
         """
         Called periodically as soon as `scan_interval` has expired. Checks if
         new files of the given type are created.

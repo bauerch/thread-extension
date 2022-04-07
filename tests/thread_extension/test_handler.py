@@ -11,7 +11,7 @@ class CycleWorkerThreadClass(unittest.TestCase):
     CycleWorkerThread class within <src.thread_extension.handler>.
     """
     @staticmethod
-    def work_routine() -> None:
+    def run_routine() -> None:
         """
         Simulating a specific worker, that needs 100 ms to finish it's
         work routine.
@@ -19,7 +19,7 @@ class CycleWorkerThreadClass(unittest.TestCase):
         time.sleep(0.1)
 
     def setUp(self):
-        self.__worker = handler.CycleWorkerThread(target=self.work_routine)
+        self.__worker = handler.CycleWorkerThread(target=self.run_routine)
 
     def tearDown(self):
         del self.__worker
@@ -143,7 +143,7 @@ class TaskWorkerThreadClass(unittest.TestCase):
         def __init__(self, tasks) -> None:
             super().__init__(tasks)
 
-        def work_on_task(self, task: int) -> None:
+        def run_task(self, task: int) -> None:
             time.sleep(0.1)
 
     def setUp(self):

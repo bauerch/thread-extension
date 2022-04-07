@@ -58,7 +58,7 @@ class CycleWorkerThread(Thread, ThreadControlMixin):
                     break
                 self._task_done.clear()
                 try:
-                    self.work_routine()
+                    self.run_routine()
                 finally:
                     self._task_done.set()
                 time.sleep(self._delay)
@@ -69,11 +69,11 @@ class CycleWorkerThread(Thread, ThreadControlMixin):
             # an argument that has a member that points to the thread.
             del self._target, self._args, self._kwargs
 
-    def work_routine(self) -> None:
+    def run_routine(self) -> None:
         """
         Representing the worker's activity on each cycle.
 
-        You may override this method in a subclass. The work_routine() method
+        You may override this method in a subclass. The run_routine() method
         invokes the callable object passed to the object's constructor as the
         target argument, if any, with sequential and keyword arguments taken
         from the args and kwargs arguments, respectively.
@@ -90,7 +90,7 @@ class CycleWorkerThread(Thread, ThreadControlMixin):
     def delay(self) -> float:
         """
         Indicates how much time shall pass before the worker continues with
-        the next work cycle.
+        the next cycle.
         """
         return self._delay
 
@@ -167,7 +167,7 @@ class TaskWorkerThread(Thread, ThreadControlMixin):
                 self._task_done.clear()
                 try:
                     task = self._queue.get()
-                    self.work_on_task(task)
+                    self.run_task(task)
                 except queue.Empty:
                     break
                 else:
@@ -180,7 +180,7 @@ class TaskWorkerThread(Thread, ThreadControlMixin):
             self.stop()
 
     @abc.abstractmethod
-    def work_on_task(self, task: Any) -> None:
+    def run_task(self, task: Any) -> None:
         """
         Abstract method representing the worker's activity on all task.
         """
@@ -192,7 +192,7 @@ class TaskWorkerThread(Thread, ThreadControlMixin):
     def delay(self) -> float:
         """
         Indicates how much time shall pass before the worker continues with
-        the next work cycle.
+        the next task.
         """
         return self._delay
 

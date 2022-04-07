@@ -3,7 +3,6 @@
 
 .. py:currentmodule:: src.thread_extension.handler
 
-TBD.
 
 CycleWorker
 -----------
@@ -14,10 +13,10 @@ CycleWorker
    from handler import CycleWorkerThread
 
 
-   def work_routine(self) -> None:
+   def run_routine(self) -> None:
        pass  # Put your code here
 
-   worker = CycleWorkerThread(target=work_routine)
+   worker = CycleWorkerThread(target=run_routine)
    worker.start()
    worker.join()
 
@@ -30,7 +29,7 @@ CycleWorker
        def __init__(self) -> None:
            super().__init__()
 
-       def work_routine(self) -> None:
+       def run_routine(self) -> None:
            pass  # Put your code here
 
    worker = MyCycleWorker()
@@ -46,7 +45,7 @@ CycleWorker
    .. py:attribute:: delay
 
       Indicates how much time shall pass before the worker continues with
-      the next work cycle.
+      the next cycle.
 
    .. py:attribute:: timeout
 
@@ -57,18 +56,18 @@ CycleWorker
 
       Defines the worker's concrete workflow.
 
-   .. method:: work_routine()
+   .. method:: run_routine()
 
       Representing the worker's activity on each cycle.
 
-      You may override this method in a subclass. The work_routine() method
+      You may override this method in a subclass. The run_routine() method
       invokes the callable object passed to the object's constructor as the
       target argument, if any, with sequential and keyword arguments taken
       from the args and kwargs arguments, respectively.
 
    .. method:: is_working()
 
-      TBD.
+      Returns ```True``` if the worker is running a routine, ```False``` otherwise.
 
    .. method:: preparation()
 
@@ -91,7 +90,7 @@ TaskWorker
        def __init__(self, tasks: queue.Queue) -> None:
            super().__init__(tasks)
 
-       def work_on_task(self, task: str) -> None:
+       def run_task(self, task: str) -> None:
            pass  # Put your code here
 
    my_tasks = queue.Queue()
@@ -109,7 +108,7 @@ TaskWorker
    .. py:attribute:: delay
 
       Indicates how much time shall pass before the worker continues with
-      the next work cycle.
+      the next task.
 
    .. py:attribute:: timeout
 
@@ -120,13 +119,13 @@ TaskWorker
 
       Defines the worker's concrete workflow.
 
-   .. method:: work_on_task(task)
+   .. method:: run_task(task)
 
       Abstract method representing the worker's activity on all task.
 
    .. method:: is_working()
 
-      TBD.
+      Returns ```True``` if the worker is running a task, ```False``` otherwise.
 
    .. method:: preparation()
 
