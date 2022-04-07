@@ -1,4 +1,4 @@
-:mod:`core` --- worker-threads
+:mod:`core` --- worker threads
 ==============================
 
 .. py:currentmodule:: src.worker_threads.core

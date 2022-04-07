@@ -18,8 +18,8 @@ sys.path.insert(0, os.path.abspath('.'))
 # -- Project information -----------------------------------------------------
 
 project = 'worker-threads'
-copyright = '2022, bauer'
-author = 'bauer'
+copyright = '2022, bauerch'
+author = 'bauerch'
 
 # The full version, including alpha/beta/rc tags
 release = '1.0'

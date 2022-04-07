@@ -1,5 +1,5 @@
-Welcome to worker-threads documentation!
-========================================
+Welcome to worker-threads!
+==========================
 TBD.
 
 Dependencies
