@@ -11,60 +11,60 @@ class ThreadControlMixin(Machine):
     This class implements a state machine allowing thread objects to make use of
     additional control states to enable pause, resume and stop events at runtime.
     """
-    _INITIAL = State("initial")
-    _RUNNING = State("running")
-    _STOPPED = State("stopped")
-    _PAUSED = State("paused")
+    INITIAL = State("initial")
+    RUNNING = State("running")
+    STOPPED = State("stopped")
+    PAUSED = State("paused")
 
     def __init__(self) -> None:
         self._running = Event()
         Machine.__init__(
             self,
             states=[
-                self._INITIAL,
-                self._RUNNING,
-                self._STOPPED,
-                self._PAUSED
+                self.INITIAL,
+                self.RUNNING,
+                self.STOPPED,
+                self.PAUSED
             ],
-            initial=self._INITIAL.name
+            initial=self.INITIAL.name
         )
         self.add_transition(
             trigger="running",
-            source=self._INITIAL.name,
-            dest=self._RUNNING.name,
+            source=self.INITIAL.name,
+            dest=self.RUNNING.name,
             before="_before_running_state"
         )
         self.add_transition(
             trigger="pause",
-            source=self._PAUSED.name,
+            source=self.PAUSED.name,
             dest="="
         )
         self.add_transition(
             trigger="pause",
-            source=self._RUNNING.name,
-            dest=self._PAUSED.name,
+            source=self.RUNNING.name,
+            dest=self.PAUSED.name,
             before="_before_paused_state"
         )
         self.add_transition(
             trigger="resume",
-            source=self._RUNNING.name,
+            source=self.RUNNING.name,
             dest="="
         )
         self.add_transition(
             trigger="resume",
-            source=self._PAUSED.name,
-            dest=self._RUNNING.name,
+            source=self.PAUSED.name,
+            dest=self.RUNNING.name,
             before="_before_running_state"
         )
         self.add_transition(
             trigger="stop",
-            source=self._STOPPED.name,
+            source=self.STOPPED.name,
             dest="="
         )
         self.add_transition(
             trigger="stop",
-            source=[self._RUNNING.name, self._PAUSED.name],
-            dest=self._STOPPED.name,
+            source=[self.RUNNING.name, self.PAUSED.name],
+            dest=self.STOPPED.name,
             after="_after_stopped_state"
         )
 
