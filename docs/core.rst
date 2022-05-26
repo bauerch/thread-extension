@@ -12,7 +12,7 @@ CycleWorker
    from worker_threads import CycleWorkerThread
 
 
-   def run_routine() -> None:
+   def run_routine():
        pass  # Put your code here
 
 
@@ -24,10 +24,10 @@ CycleWorker
 
 
    class MyCycleWorker(CycleWorkerThread):
-       def __init__(self) -> None:
+       def __init__(self):
            super().__init__()
 
-       def run_routine(self) -> None:
+       def run_routine(self):
            pass  # Put your code here
 
 .. class:: CycleWorkerThread(delay=0.0, timeout=1000.0, target=None, args=(), kwargs={}, daemon=None)
@@ -80,10 +80,10 @@ TaskWorker
 
 
    class MyTaskWorker(TaskWorkerThread):
-       def __init__(self, tasks) -> None:
+       def __init__(self, tasks):
            super().__init__(tasks)
 
-       def run_task(self, task) -> None:
+       def run_task(self, task):
            pass  # Put your code here
 
 
