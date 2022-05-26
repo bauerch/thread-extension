@@ -17,10 +17,6 @@ CycleWorker
 
 
    worker = CycleWorkerThread(target=run_routine)
-   worker.start()
-   worker.join(timeout=2)
-   worker.stop()
-   worker.join()
 
 .. code-block:: python
 
@@ -33,13 +29,6 @@ CycleWorker
 
        def run_routine(self) -> None:
            pass  # Put your code here
-
-
-   worker = MyCycleWorker()
-   worker.start()
-   worker.join(timeout=2)
-   worker.stop()
-   worker.join()
 
 .. class:: CycleWorkerThread(delay=0.0, timeout=1000.0, target=None, args=(), kwargs={}, daemon=None)
 
@@ -87,24 +76,16 @@ TaskWorker
 
 .. code-block:: python
 
-   import queue
    from worker_threads import TaskWorkerThread
 
 
    class MyTaskWorker(TaskWorkerThread):
-       def __init__(self, tasks: queue.Queue) -> None:
+       def __init__(self, tasks) -> None:
            super().__init__(tasks)
 
        def run_task(self, task) -> None:
            pass  # Put your code here
 
-
-   my_tasks = queue.Queue()
-   for i in range(1000):
-       my_tasks.put(i)
-   worker = MyTaskWorker(my_tasks)
-   worker.start()
-   worker.join()
 
 .. class:: TaskWorkerThread(tasks, delay=0.0, timeout=1000.0, daemon=None)
 
