@@ -4,19 +4,15 @@
 .. py:currentmodule:: src.worker_threads.core
 
 
+All classes inherit from the conventional `Thread <https://docs.python.org/3/library/threading.
+html#thread-objects>`_ class and the new :ref:`ThreadControlMixin <link-thread-control-mixin>`
+class.
+
 CycleWorker
 -----------
-
-.. code-block:: python
-
-   from worker_threads import CycleWorkerThread
-
-
-   def run_routine():
-       pass  # Put your code here
-
-
-   worker = CycleWorkerThread(target=run_routine)
+To make use of this class simply subclass the :class:`CycleWorkerThread` class and overwrite the
+:meth:`~CycleWorkerThread.run_routine`. No other methods (except for the constructor) should be
+overridden in a subclass. From this point on everything works like a conventional thread objects.
 
 .. code-block:: python
 
@@ -30,11 +26,25 @@ CycleWorker
        def run_routine(self):
            pass  # Put your code here
 
+
+There is another way to specify the activity by passing a callable object to the constructor.
+
+.. code-block:: python
+
+   from worker_threads import CycleWorkerThread
+
+
+   def run_routine():
+       pass  # Put your code here
+
+
+   worker = CycleWorkerThread(target=run_routine)
+
+
 .. class:: CycleWorkerThread(delay=0.0, timeout=1000.0, target=None, args=(), kwargs={}, daemon=None)
 
     This class represents a special thread type, which executes a predefined routine
     cyclically until a stop event is triggered.
-
 
    .. py:attribute:: delay
 
@@ -73,6 +83,9 @@ CycleWorker
 
 TaskWorker
 ----------
+To make use of this class simply subclass the :class:`TaskWorkerThread` class and overwrite the
+:meth:`~CycleWorkerThread.run_task`. No other methods (except for the constructor) should be
+overridden in a subclass. From this point on everything works like a conventional thread objects.
 
 .. code-block:: python
 

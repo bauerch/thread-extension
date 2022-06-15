@@ -35,6 +35,8 @@ on everything works like a conventional thread.
        def run(self):
           pass  # Put your code here
 
+.. _link-thread-control-mixin:
+
 .. class:: ThreadControlMixin
 
     This class implements a state machine allowing thread objects to make use of
@@ -43,8 +45,9 @@ on everything works like a conventional thread.
    .. py:attribute:: state
 
       A string used for internal state tracking only. Can be one of the following options
-      ``initial``, ``running``, ``paused`` or ``stopped``. For more information please
-      refer to the :ref:`State Diagram <link-state-diagram>` section.
+      ``initial``, ``running``, ``paused`` or ``stopped``.
+
+      For more information please refer to the :ref:`State Diagram <link-state-diagram>` section.
 
    .. method:: is_initial()
 
